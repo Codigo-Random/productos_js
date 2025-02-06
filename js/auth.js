@@ -6,10 +6,16 @@ const inputPassword = document.getElementById("password");
 
 // Btn de login
 const btnLogin = document.getElementById("login");
-
 if(btnLogin) {
     btnLogin.addEventListener("click", login)
 }
+
+// Btn registro
+const btnRegister = document.getElementById("register");  
+if(btnRegister) {
+    btnRegister.addEventListener("click", register)
+}
+
 
 async function login() {
 
@@ -28,6 +34,33 @@ async function login() {
     const response = await fetch(`${BASE_URL}/auth/v1/token?grant_type=password`, requestOptions) 
     if(!response.ok) {
         alert("Error al iniciar sesión")
+    }
+
+    const result = await response.json()
+ 
+    localStorage.setItem("token", result.access_token)
+    localStorage.setItem("userId", result.user.id)
+
+    window.location.href = "/dashboard.html"
+}
+
+async function register() {
+
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            "apikey": APIKEY,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            "email": inputEmail.value,
+            "password": inputPassword.value
+        }),
+    };
+
+    const response = await fetch(`${BASE_URL}/auth/v1/signup`, requestOptions) 
+    if(!response.ok) {
+        alert("Error en el registro")
     }
 
     const result = await response.json()
