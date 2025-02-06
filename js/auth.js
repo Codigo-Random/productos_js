@@ -1,5 +1,4 @@
-const APIKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlyaWxlb2ZkamtjbXNwdmVibnFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQyNzk1MDYsImV4cCI6MjA0OTg1NTUwNn0.MZx5Cpcw6aqM7A9Sc8_VC6HWnSKQ0SYkWpTqUAI0-Pg"
-const BASE_URL = "https://irileofdjkcmspvebnqq.supabase.co"
+import { APIKEY, BASE_URL } from "./config.js"
 
 const inputEmail = document.getElementById("email");
 const inputPassword = document.getElementById("password");
@@ -102,4 +101,8 @@ export function logout() {
     localStorage.removeItem("userId")
 
     window.location.href = "/index.html"
+}
+
+export function getToken() {
+    return localStorage.getItem("token")
 }
