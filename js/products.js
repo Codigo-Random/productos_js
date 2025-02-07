@@ -1,5 +1,5 @@
 import { APIKEY, BASE_URL } from "./config.js"
-import { logout, getToken } from "./auth.js"
+import { logout, getToken, getUserId } from "./auth.js"
 
 const btnLogout = document.getElementById("logout");
 if(btnLogout) {
@@ -33,7 +33,26 @@ async function getProducts() {
 }
 
 function printProducts(allProducts) {
+
+    // el UserId del user actual
+    const currentUserId = getUserId()
+    
+    // Vaciamos el div
+    productList.innerHTML = ""
+    
     allProducts.forEach(product => {
+
+        let btnDelete = ""
+
+        // es mi producto?
+        if(currentUserId == product.user_id) {
+            btnDelete = `
+                    <button data-id="${product.id}" class="delete-btn bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                        Eliminar
+                    </button>
+                    `
+        }
+
         productList.innerHTML += `
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-semibold mb-2">${product.name}</h2>
@@ -44,13 +63,41 @@ function printProducts(allProducts) {
                     <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                         Editar
                     </button>
-                    <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
-                        Eliminar
-                    </button>
+                    ${btnDelete}
                 </div>
             </div>
         `
     });
+
+    const buttonsDelete = document.querySelectorAll(".delete-btn") 
+    buttonsDelete.forEach(button => {
+        const productId = button.getAttribute("data-id")
+
+        button.addEventListener("click", () => {
+            deleteProduct(productId)
+        })
+    })
+}
+
+async function deleteProduct(productId) {
+    
+    const requestOptions = {
+        method: "DELETE",
+        headers: {
+            "apikey": APIKEY,
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${getToken()}`
+        }
+    };
+
+    const response = await fetch(`${BASE_URL}/rest/v1/products_clm?id=eq.${productId}`, requestOptions) 
+    if(!response.ok) {
+        alert("Error en la petición")
+        return false
+    }
+
+    getProducts()
+
 }
 
 getProducts()
